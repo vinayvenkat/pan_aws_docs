@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Palo Alto Networks Lambda Functions for ELB AutoScale Deployment &mdash; Palo Alto Networks AWS ELB Autoscale Architecture 1.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Palo Alto Networks AWS ELB Autoscale Architecture 1.2 documentation" href="index.html"/>
+        <link rel="next" title="Architecture of the Palo Alto CFT Lambda Functions" href="arch.html"/>
+        <link rel="prev" title="Welcome to Palo Alto Networks AWS ELB Autoscale Architecture’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Palo Alto Networks AWS ELB Autoscale Architecture
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Palo Alto Networks Lambda Functions for ELB AutoScale Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aws-specific-deployment-options">AWS Specific Deployment Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lambda-function-objectives">Lambda function objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#theory-of-operation">Theory of Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputs-to-the-lambda-functions">Inputs to the Lambda Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="arch.html">Architecture of the Palo Alto CFT Lambda Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Palo Alto Networks AWS ELB Autoscale Architecture</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Palo Alto Networks Lambda Functions for ELB AutoScale Deployment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="palo-alto-networks-lambda-functions-for-elb-autoscale-deployment">
+<h1>Palo Alto Networks Lambda Functions for ELB AutoScale Deployment<a class="headerlink" href="#palo-alto-networks-lambda-functions-for-elb-autoscale-deployment" title="Permalink to this headline">¶</a></h1>
+<p>The Lambda Functions implemented and published by Palo Alto Networks are
+meant to work in conjunction with the ELB Auto Scaling Deployment on AWS.</p>
+<p>At a high level, the goal of the lambda functions is to perform the initial
+setup and the plumbing necessary to allow traffic from the internet (untrust
+subnet) to the backend web tier (trust subnet) via the Palo Alto Networks
+Next Generation Firewall. The policies on the PAN NGFW determine the traffic
+that will be permitted to pass between the untrust and trust subnets.
+Additionally, the lambda functions also handle the various actions required
+when various events, such as autoscaling, occur which require the manipulation
+of the firewalls.</p>
+<div class="section" id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Deploy Palo Alto Networks Next Generation Firewall in an auto scale
+configuration to handle unpredictable traffic patterns (spikes etc).</li>
+<li>Deploy best practice architectures to secure multi-tier applications
+on AWS with Palo Alto Networks Next Generation Firewalls.</li>
+</ol>
+</div>
+<div class="section" id="aws-specific-deployment-options">
+<h2>AWS Specific Deployment Options<a class="headerlink" href="#aws-specific-deployment-options" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Palo Alto supports the ELB architecture to be deployed
+with optional NAT Gateways fronting back end infrastructure.
+The advantage of this configuration is to not require publicly
+routable IP addresses for various instances in the absence of the NAT
+gateway.</li>
+<li>Alternatively, the ELB architecture can be deployed without NAT Gateways,
+in which case, public IP addresses will be created and assigned to the
+various nodes.</li>
+</ol>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<div class="figure align-center" id="id1">
+<img alt="alternate text" src="_images/aws.png" />
+<p class="caption"><span class="caption-text">Fig 1. Palo Alto ELB Auto Scale Architecture</span></p>
+</div>
+</div>
+<div class="section" id="lambda-function-objectives">
+<h2>Lambda function objectives<a class="headerlink" href="#lambda-function-objectives" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Deploy ASG’s and Bootstrap the Firewalls.</li>
+<li>Deploy Lambda Functions to monitor the VIP’s on the ILB.</li>
+<li>Program the NAT rules on the PAN FW</li>
+<li>Handle Auto Scale Events and take the necessary actions.</li>
+<li>Handle the de-licensing of Firewalls when they are deleted.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="theory-of-operation">
+<h2>Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Permalink to this headline">¶</a></h2>
+<p>There are 4 main lambda functions that get deployed:</p>
+<blockquote>
+<div><ul class="simple">
+<li>InitLambda</li>
+<li>AddENI</li>
+<li>sched_evt1</li>
+<li>metrics</li>
+</ul>
+</div></blockquote>
+<p>The two lambda functions that get deployed by the CFT are the first two listed above.</p>
+<p>Init Lambda Function</p>
+<blockquote>
+<div><p>The InitLambda lambda function is responsible for the following functions:
+- deployment and configuration of the <code class="docutils literal"><span class="pre">`sched_evt1`</span></code> lambda function
+- handling creation, update and delete of the cloud formation template
+- validating the AMI-ID’s of the PAN FW specified by the user</p>
+<p>When the init lambda function is triggered it validates that the AMI-ID of the PAN FW
+is valid and then proceeds to deploy the <code class="docutils literal"><span class="pre">`sched_evt1`</span></code> lambda function with all the
+required parameters. It should also be noted that the <code class="docutils literal"><span class="pre">`sched_evt1`</span></code> lambda function
+is configured to be triggered every minute. The rationale for the frequency is provided
+in the next section.</p>
+</div></blockquote>
+<p>Sched_evt1 Lambda Function</p>
+<blockquote>
+<div><p>The primary objective of this lambda function is to probe (or describe / list) the IP addresses
+configured on the ILB, and for each and every IP address ensure that there is a corresponding
+ASG deployed. Conversely, if there exists an ASG without a corresponding IP address, the lambda function
+will delete the ASG.</p>
+<p>When a new ASG is created, callbacks to handle life-cycle hooks are also configured.
+Enabling the life-cycle hooks allows for the <code class="docutils literal"><span class="pre">`add_eni`</span></code> lambda function to take various
+actions depending upon the life cycle action. The specific actions taken will be described in the section
+which describes the <code class="docutils literal"><span class="pre">`add_eni`</span></code> lambda function description.</p>
+</div></blockquote>
+<p>Add_ENI Lambda Function</p>
+<blockquote>
+<div><p>The <code class="docutils literal"><span class="pre">`add_eni`</span></code> lambda function gets invoked by a life-cycle hook trigger. The lambda function gets
+triggered when an instance in an ASG either launches or terminates. When handling an instance launch
+life-cycle hook action, the lambda function creates and attaches ENI’s for the management and trust
+subnets. The lambda function is also responsible for the creation Elastic IP’s if necessary and attaching
+the EIP’s to the ENI’s.</p>
+<p>Additionally, this lambda function also creates or deletes, as the case maybe, the <code class="docutils literal"><span class="pre">`metrics`</span></code> lambda
+function. The details of the <code class="docutils literal"><span class="pre">`metrics`</span></code> lambda function are described below.</p>
+</div></blockquote>
+<p>Metrics Lambda Function</p>
+<blockquote>
+<div>The <code class="docutils literal"><span class="pre">`metrics`</span></code> lambda function is configured to be invoked every second. The objective of this function
+is to query the firewalls for various defined metrics via the XML API. The metrics retrieved from the firewall
+are subsequently consumed by the AWS Auto Scaling framework, in order to make decisions with regard to either
+keeping the number of firewalls constant, or increasing or decreasing the number of firewalls as the case maybe.</div></blockquote>
+</div>
+<div class="section" id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<p>The logs from the lambda functions are available as Cloud Watch Logs. Log groups are created on cloud watch,
+which are prepended with the stack name.</p>
+</div>
+<div class="section" id="inputs-to-the-lambda-functions">
+<h2>Inputs to the Lambda Functions<a class="headerlink" href="#inputs-to-the-lambda-functions" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Identify the various deployment artifacts such as:</p>
+<ul class="simple">
+<li>VPC</li>
+<li>Subnets (Trust, Untrust, Mgmt)</li>
+<li>Security Groups</li>
+<li>NAT Gateway (if any)</li>
+<li>IAM Roles</li>
+<li>PAN FW AMI Id</li>
+<li>Lambda ENI SNS Topic</li>
+<li>Lambda SQS queue</li>
+<li>Bootstrap S3 bucket</li>
+<li>Lambda Functions S3 bucket</li>
+<li>Security Groups</li>
+<li>Init Lambda Function</li>
+<li>Add ENI Lambda Function</li>
+<li>Key to De-license the FW</li>
+<li>ELB and ILB Names</li>
+<li>AWS Region</li>
+<li>Auto Scale Threshold</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="arch.html" class="btn btn-neutral float-right" title="Architecture of the Palo Alto CFT Lambda Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Palo Alto Networks AWS ELB Autoscale Architecture’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Palo Alto Networks.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
