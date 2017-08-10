@@ -97,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#aws-specific-deployment-options">AWS Specific Deployment Options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lambda-function-objectives">Lambda function objectives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#theory-of-operation">Theory of Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#availability-zones">Availability Zones</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#auto-scaling-parameters">Auto Scaling Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panorama">Panorama</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
@@ -104,6 +105,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="arch.html">Architecture of the Palo Alto CFT Lambda Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="links.html">Useful Links</a></li>
 </ul>
 
             
@@ -227,8 +229,8 @@ various nodes.</li>
 <p>There are 4 main lambda functions that get deployed:</p>
 <blockquote>
 <div><ul class="simple">
-<li>InitLambda</li>
-<li>AddENI</li>
+<li>init</li>
+<li>add_eni</li>
 <li>sched_evt1</li>
 <li>metrics</li>
 </ul>
@@ -274,6 +276,12 @@ is to query the firewalls for various defined metrics via the XML API. The metri
 are subsequently consumed by the AWS Auto Scaling framework, in order to make decisions with regard to either
 keeping the number of firewalls constant, or increasing or decreasing the number of firewalls as the case maybe.</div></blockquote>
 </div>
+<div class="section" id="availability-zones">
+<h2>Availability Zones<a class="headerlink" href="#availability-zones" title="Permalink to this headline">¶</a></h2>
+<p>The ELB Autoscale Deployments require at a minimum two availability zones to be deployed into. Consequently,
+the lambda functions will spin up auto scale groups to match the desired capacities in all of the specified
+availability zones.</p>
+</div>
 <div class="section" id="auto-scaling-parameters">
 <h2>Auto Scaling Parameters<a class="headerlink" href="#auto-scaling-parameters" title="Permalink to this headline">¶</a></h2>
 <p>Autoscaling on AWS occurs by defining and advertising the parameters that will be used by the AWS framework to make
@@ -315,23 +323,47 @@ which are prepended with the stack name.</p>
 <blockquote>
 <div><p>Identify the various deployment artifacts such as:</p>
 <ul class="simple">
-<li>VPC</li>
-<li>Subnets (Trust, Untrust, Mgmt)</li>
-<li>Security Groups</li>
-<li>NAT Gateway (if any)</li>
-<li>IAM Roles</li>
-<li>PAN FW AMI Id</li>
-<li>Lambda ENI SNS Topic</li>
-<li>Lambda SQS queue</li>
-<li>Bootstrap S3 bucket</li>
-<li>Lambda Functions S3 bucket</li>
-<li>Security Groups</li>
-<li>Init Lambda Function</li>
-<li>Add ENI Lambda Function</li>
-<li>Key to De-license the FW</li>
-<li>ELB and ILB Names</li>
-<li>AWS Region</li>
-<li>Auto Scale Threshold</li>
+<li>ServiceToken</li>
+<li>StackName</li>
+<li>Region</li>
+<li>VPCID</li>
+<li>SubnetIDMgmt</li>
+<li>SubnetIDUntrust</li>
+<li>SubnetIDTrust</li>
+<li>MgmtSecurityGroup</li>
+<li>UntrustSecurityGroup</li>
+<li>TrustSecurityGroup</li>
+<li>VPCSecurityGroup</li>
+<li>KeyName</li>
+<li>ELBName</li>
+<li>ILBName</li>
+<li>FWInstanceType</li>
+<li>SSHLocation</li>
+<li>MaximumInstancesASG</li>
+<li>ScaleUpThreshold</li>
+<li>ScaleDownThreshold</li>
+<li>ScalingParameter</li>
+<li>ScalingPeriod</li>
+<li>ImageID</li>
+<li>LambdaENISNSTopic</li>
+<li>MinInstancesASG</li>
+<li>FirewallBootstrapRole</li>
+<li>LambdaExecutionRole</li>
+<li>ASGNotifierRole</li>
+<li>ASGNotifierRolePolicy</li>
+<li>MasterS3Bucket</li>
+<li>PanS3BucketTpl</li>
+<li>PanS3KeyTpl</li>
+<li>KeyPANWFirewall</li>
+<li>KeyPANWPanorama</li>
+<li>NATGateway</li>
+<li>SubnetIDNATGW</li>
+<li>SubnetIDLambda</li>
+<li>AddENILambda</li>
+<li>InitLambda</li>
+<li>Version</li>
+<li>KeyDeLicense</li>
+<li>LambdaENIQueue</li>
 </ul>
 </div></blockquote>
 </div>

@@ -64,8 +64,8 @@ Theory of Operation
 
 There are 4 main lambda functions that get deployed:
 
-    - InitLambda
-    - AddENI
+    - init
+    - add_eni
     - sched_evt1
     - metrics
 
@@ -115,6 +115,13 @@ Metrics Lambda Function
     are subsequently consumed by the AWS Auto Scaling framework, in order to make decisions with regard to either
     keeping the number of firewalls constant, or increasing or decreasing the number of firewalls as the case maybe.
 
+Availability Zones
+++++++++++++++++++
+
+The ELB Autoscale Deployments require at a minimum two availability zones to be deployed into. Consequently,
+the lambda functions will spin up auto scale groups to match the desired capacities in all of the specified
+availability zones.
+
 Auto Scaling Parameters
 +++++++++++++++++++++++
 
@@ -129,7 +136,7 @@ auto scaling decisions. The parameters currently defined are:
 
 The AWS requires users to specify a ```high``` threshold and a ```low``` threshold for each parameters. When one of the
 parameters breaches the high threshold mark, a scale out event is triggered. Consequently, when one of the parameters
-breaches the low threshold mark, a scale in event is triggered. 
+breaches the low threshold mark, a scale in event is triggered.
 
 Panorama
 ++++++++
@@ -154,20 +161,45 @@ Inputs to the Lambda Functions
 
     Identify the various deployment artifacts such as:
 
-    - VPC
-    - Subnets (Trust, Untrust, Mgmt)
-    - Security Groups
-    - NAT Gateway (if any)
-    - IAM Roles
-    - PAN FW AMI Id
-    - Lambda ENI SNS Topic
-    - Lambda SQS queue
-    - Bootstrap S3 bucket
-    - Lambda Functions S3 bucket
-    - Security Groups
-    - Init Lambda Function
-    - Add ENI Lambda Function
-    - Key to De-license the FW
-    - ELB and ILB Names
-    - AWS Region
-    - Auto Scale Threshold
+    - ServiceToken
+    - StackName
+    - Region
+    - VPCID
+    - SubnetIDMgmt
+    - SubnetIDUntrust
+    - SubnetIDTrust
+    - MgmtSecurityGroup
+    - UntrustSecurityGroup
+    - TrustSecurityGroup
+    - VPCSecurityGroup
+    - KeyName
+    - ELBName
+    - ILBName
+    - FWInstanceType
+    - SSHLocation
+    - MaximumInstancesASG
+    - ScaleUpThreshold
+    - ScaleDownThreshold
+    - ScalingParameter
+    - ScalingPeriod
+    - ImageID
+    - LambdaENISNSTopic
+    - MinInstancesASG
+    - FirewallBootstrapRole
+    - LambdaExecutionRole
+    - ASGNotifierRole
+    - ASGNotifierRolePolicy
+    - MasterS3Bucket
+    - PanS3BucketTpl
+    - PanS3KeyTpl
+    - KeyPANWFirewall
+    - KeyPANWPanorama
+    - NATGateway
+    - SubnetIDNATGW
+    - SubnetIDLambda
+    - AddENILambda
+    - InitLambda
+    - Version
+    - KeyDeLicense
+    - LambdaENIQueue
+
