@@ -115,12 +115,39 @@ Metrics Lambda Function
     are subsequently consumed by the AWS Auto Scaling framework, in order to make decisions with regard to either
     keeping the number of firewalls constant, or increasing or decreasing the number of firewalls as the case maybe.
 
+Auto Scaling Parameters
++++++++++++++++++++++++
+
+Autoscaling on AWS occurs by defining and advertising the parameters that will be used by the AWS framework to make
+auto scaling decisions. The parameters currently defined are:
+
+    - ActiveSessions
+    - DataPlaneBufferUtilization
+    - DataPlaneCPUUtilization
+    - GPGatewayUtilization
+    - SessionUtilization
+
+The AWS requires users to specify a ```high``` threshold and a ```low``` threshold for each parameters. When one of the
+parameters breaches the high threshold mark, a scale out event is triggered. Consequently, when one of the parameters
+breaches the low threshold mark, a scale in event is triggered. 
+
+Panorama
+++++++++
+
+The use of a Panorama is optional along with the autoscaling deployment. However, it is possible to associate
+a firewall with the Panorama. Panorama configuration parameters such as the IP among others can be specified
+in the ```init-cfg``` file.
 
 Logging
 +++++++
 
 The logs from the lambda functions are available as Cloud Watch Logs. Log groups are created on cloud watch,
 which are prepended with the stack name.
+
+.. note:: The logging level for the CFT stack can be modified in the following manner:
+
+   - Create a queue on SQS, and name it with the stack name
+   - Send a message with the desired logging level.
 
 Inputs to the Lambda Functions
 ++++++++++++++++++++++++++++++

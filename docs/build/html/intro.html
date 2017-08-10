@@ -97,6 +97,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#aws-specific-deployment-options">AWS Specific Deployment Options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lambda-function-objectives">Lambda function objectives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#theory-of-operation">Theory of Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-scaling-parameters">Auto Scaling Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panorama">Panorama</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#inputs-to-the-lambda-functions">Inputs to the Lambda Functions</a></li>
 </ul>
@@ -272,10 +274,41 @@ is to query the firewalls for various defined metrics via the XML API. The metri
 are subsequently consumed by the AWS Auto Scaling framework, in order to make decisions with regard to either
 keeping the number of firewalls constant, or increasing or decreasing the number of firewalls as the case maybe.</div></blockquote>
 </div>
+<div class="section" id="auto-scaling-parameters">
+<h2>Auto Scaling Parameters<a class="headerlink" href="#auto-scaling-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Autoscaling on AWS occurs by defining and advertising the parameters that will be used by the AWS framework to make
+auto scaling decisions. The parameters currently defined are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>ActiveSessions</li>
+<li>DataPlaneBufferUtilization</li>
+<li>DataPlaneCPUUtilization</li>
+<li>GPGatewayUtilization</li>
+<li>SessionUtilization</li>
+</ul>
+</div></blockquote>
+<p>The AWS requires users to specify a <code class="docutils literal"><span class="pre">`high`</span></code> threshold and a <code class="docutils literal"><span class="pre">`low`</span></code> threshold for each parameters. When one of the
+parameters breaches the high threshold mark, a scale out event is triggered. Consequently, when one of the parameters
+breaches the low threshold mark, a scale in event is triggered.</p>
+</div>
+<div class="section" id="panorama">
+<h2>Panorama<a class="headerlink" href="#panorama" title="Permalink to this headline">¶</a></h2>
+<p>The use of a Panorama is optional along with the autoscaling deployment. However, it is possible to associate
+a firewall with the Panorama. Panorama configuration parameters such as the IP among others can be specified
+in the <code class="docutils literal"><span class="pre">`init-cfg`</span></code> file.</p>
+</div>
 <div class="section" id="logging">
 <h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
 <p>The logs from the lambda functions are available as Cloud Watch Logs. Log groups are created on cloud watch,
 which are prepended with the stack name.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The logging level for the CFT stack can be modified in the following manner:</p>
+<ul class="last simple">
+<li>Create a queue on SQS, and name it with the stack name</li>
+<li>Send a message with the desired logging level.</li>
+</ul>
+</div>
 </div>
 <div class="section" id="inputs-to-the-lambda-functions">
 <h2>Inputs to the Lambda Functions<a class="headerlink" href="#inputs-to-the-lambda-functions" title="Permalink to this headline">¶</a></h2>
